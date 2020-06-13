@@ -43,8 +43,8 @@ int new_server(char* address, int port) {
 }
 
 int main(int argv, char** argc) {
-  if(argv < 2) return 1;
-  int serverfd = new_server("10.0.0.8", atoi(argc[1]));
+  if(argv < 3) return 1;
+  int serverfd = new_server(argc[1], atoi(argc[2]));
   if(serverfd == -1) return 1;
 
   listen(serverfd, 5);
