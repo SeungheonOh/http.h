@@ -1,4 +1,5 @@
 #ifndef HTTP_H_INCLUDES
+#define HTTP_H_INCLUDES
 
 #define _GNU_SOURCE
 #include <stdio.h>
@@ -7,10 +8,9 @@
 #include <unistd.h>
 #include <stdbool.h>
 
-#define HTTP_H_INCLUDES
 #endif //HTTP_H_INCLUDES
 
-#ifndef HTTP_H_IMPLEMENTATION
+#ifdef HTTP_H_IMPLEMENTATION
 typedef struct {
   char* buf;
   size_t len;
@@ -58,7 +58,7 @@ int bytebuf_get_index(bytebuf*, char*, size_t);
 int bytebuf_get_index_string(bytebuf*, char*);
 
 http_headers* headers_new(void);
-int headers_free(http_headers* h);
+void headers_free(http_headers* h);
 http_headers* headers_parse(char* s);
 int _headers_add(http_headers* h, char* key, char* value);
 int headers_add_single(http_headers* h, char* key, char* value);
@@ -209,7 +209,7 @@ http_headers* headers_new(){
   return h;
 }
 
-int headers_free(http_headers* h) {
+void headers_free(http_headers* h) {
   for(int i = 0; i < h->size; i++) {
     free(h->headers[i].key);
     free(h->headers[i].value);
@@ -258,6 +258,7 @@ int headers_add(http_headers* h, char** headers) {
   do {
     if(_headers_add(h, *headers, *(headers + 1))) return 1;
   } while ((headers += 2) && *headers && *(headers + 1));
+  return 0;
 }
 
 char* headers_get(http_headers* h, char* key) {
@@ -352,11 +353,13 @@ http_request* request_parse(char* s) {
 int request_set_version(http_request* r, char* v) {
   if(!r || !v) return 1;
   strncpy(r->version, v, sizeof(r->version) - 1);
+  return 0;
 }
 
 int request_set_method(http_request* r, char* m) {
   if(!r || !m) return 1;
   strncpy(r->method, m, sizeof(r->method) - 1);
+  return 0;
 }
 
 /*
@@ -466,5 +469,4 @@ char* response_string(http_response* r) {
   free(h);
   return buf;
 }
-#define HTTP_H_IMPLEMENTATION
 #endif //HTTP_H_IMPLEMENTATION

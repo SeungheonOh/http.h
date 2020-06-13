@@ -11,7 +11,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include "./http.h"
+#define HTTP_H_IMPLEMENTATION
+#include "http.h"
 
 #define ROUTE_START() if(0) {
 #define ROUTE(REQ,PATH) } else if(strcmp(REQ->method, "GET") == 0 && bytebuf_compare_string(REQ->target, PATH)) {
