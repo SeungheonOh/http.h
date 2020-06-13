@@ -1,14 +1,16 @@
-#ifndef HTTP_H
-#define HTTP_H
+#ifndef HTTP_H_INCLUDES
 
 #define _GNU_SOURCE
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <stdbool.h>
 
+#define HTTP_H_INCLUDES
+#endif //HTTP_H_INCLUDES
+
+#ifndef HTTP_H_IMPLEMENTATION
 typedef struct {
   char* buf;
   size_t len;
@@ -464,4 +466,5 @@ char* response_string(http_response* r) {
   free(h);
   return buf;
 }
-#endif
+#define HTTP_H_IMPLEMENTATION
+#endif //HTTP_H_IMPLEMENTATION
