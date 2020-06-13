@@ -86,7 +86,6 @@ int main(int argv, char** argc) {
     write(confd, resp_str, strlen(resp_str));
     write(confd, "\r\n", strlen("\r\n"));
     write(confd, resp->body->buf, resp->body->len);
-    close(confd);
 
     // Free
     free(resp_str);
