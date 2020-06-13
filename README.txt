@@ -9,3 +9,6 @@ files
 
 http.h    - http parser/constructor, bytebuf
 example.c - simple webserver only using linux socket library and http.h
+    Note) This example webserver is not multi-threaded, which mean it only
+          handles one request at a time. Implementing mutli-thread, however, 
+          is easy.
