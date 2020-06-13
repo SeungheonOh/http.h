@@ -362,7 +362,7 @@ int request_set_method(http_request* r, char* m) {
  * and Header. This function DOES NOT return body since body isn't Cstring always
  */
 char* request_string(http_request* r) {
-  char* buf = malloc(4097);
+  char* buf = malloc(4096);
   char* h = headers_string(r->headers);
 
   snprintf(buf, 4096, "%s %.*s %s\r\n%s",
@@ -452,7 +452,7 @@ void response_set_status_text(http_response* r, char* t) {
 }
 
 char* response_string(http_response* r) {
-  char* buf = malloc(4097);
+  char* buf = malloc(4096);
   char* h = headers_string(r->headers);
 
   snprintf(buf, 4096, "%s %d %s\r\n%s", 
