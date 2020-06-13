@@ -1,3 +1,8 @@
+#ifndef HTTP_H
+#define HTTP_H
+
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,7 +38,7 @@ typedef struct {
   bytebuf* body;
 } http_request;
 
-bytebuf* bytebuf_new();
+bytebuf* bytebuf_new(void);
 bytebuf* to_bytebuf(char*);
 void bytebuf_free(bytebuf*);
 void bytebuf_append(bytebuf*, char*, size_t);
@@ -50,7 +55,7 @@ int bytebuf_get_nth_index_string(bytebuf*, char*, int);
 int bytebuf_get_index(bytebuf*, char*, size_t);
 int bytebuf_get_index_string(bytebuf*, char*);
 
-http_headers* headers_new();
+http_headers* headers_new(void);
 int headers_free(http_headers* h);
 http_headers* headers_parse(char* s);
 int _headers_add(http_headers* h, char* key, char* value);
@@ -59,14 +64,14 @@ int headers_add(http_headers* h, char** headers);
 char* headers_get(http_headers* h, char* key);
 char* headers_string(http_headers* h);
 
-http_request* request_new();
+http_request* request_new(void);
 void request_free(http_request*);
 http_request* request_parse(char*);
 int request_set_version(http_request*, char*);
 int request_set_method(http_request*, char*);
 char* request_string(http_request* r);
 
-http_response* response_new();
+http_response* response_new(void);
 void response_free(http_response*);
 http_response* response_parse(char*);
 void response_set_version(http_response*, char*);
@@ -77,7 +82,7 @@ char* response_string(http_response*);
 
 bytebuf* bytebuf_new() {
   bytebuf* s = malloc(sizeof(bytebuf));
-  s->buf = malloc(0);
+  s->buf = NULL;
   s->len = 0;
   return s;
 }
@@ -197,7 +202,7 @@ int bytebuf_get_index_string(bytebuf* a, char* b) {
 
 http_headers* headers_new(){
   http_headers* h = malloc(sizeof(http_headers));
-  h->headers = malloc(0);
+  h->headers = NULL;
   h->size = 0;
   return h;
 }
@@ -216,7 +221,7 @@ http_headers* headers_parse(char* s) {
   char* header;
   char* rest = s;
 
-  while((header = __strtok_r(rest, "\r\n", &rest))) {
+  while((header = strtok_r(rest, "\r\n", &rest))) {
     char* key = strtok(header, ":");
     char* value = strtok(NULL, "");
     if(!key || !value) continue;
@@ -227,8 +232,8 @@ http_headers* headers_parse(char* s) {
 
 int _headers_add(http_headers* h, char* key, char* value) {
   h->headers = realloc(h->headers, (h->size + 1) * sizeof(*h->headers));
-  h->headers[h->size].key = (char*)malloc(strlen(key)+1);
-  h->headers[h->size].value = (char*)malloc(strlen(value)+1);
+  h->headers[h->size].key = malloc(strlen(key)+1);
+  h->headers[h->size].value = malloc(strlen(value)+1);
   if(!h->headers[h->size].key || !h->headers[h->size].value) return 1;
   strcpy(h->headers[h->size].key, key);
   strcpy(h->headers[h->size].value, value);
@@ -344,12 +349,12 @@ http_request* request_parse(char* s) {
 
 int request_set_version(http_request* r, char* v) {
   if(!r || !v) return 1;
-  strncpy(r->version, v, 20);
+  strncpy(r->version, v, sizeof(r->version) - 1);
 }
 
 int request_set_method(http_request* r, char* m) {
   if(!r || !m) return 1;
-  strncpy(r->method, m, 20);
+  strncpy(r->method, m, sizeof(r->method) - 1);
 }
 
 /*
@@ -459,3 +464,4 @@ char* response_string(http_response* r) {
   free(h);
   return buf;
 }
+#endif
